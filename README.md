@@ -6,15 +6,22 @@ Else Verbeek(f), Emma Fàbrega(c), Lene Juul Pedersen(b), Helena Telkänranta(g,
 
 1 Authors contributed equally
 
-a Adaptation Physiology Group, Department of Animal Sciences, Wageningen University and Research, P.O. Box 9101, 6700 HB Wageningen, The Netherlands
-b Department of Animal and Veterinary Sciences, Aarhus University, Blichers Alle 20
-Dk-8830, Tjele, Denmark
-c Animal Welfare Program, Institute of Agrifood Research and Technology, Veïnat de Sies s/n, 17121 Monells, Spain
-d Department of Animal Genetics, French National Institute for Agriculture, Food, and Environment, Centre de Toulouse Midi-Pyrénées, 24, Chemin de Borde Rouge CS 52627, 31326 Castanet Tolosan cedex, France.
-e Research Institute for Farm Animal Biology (FBN), Wilhelm-Stahl-Allee 2, 18196, Dummerstorf, Germany
-f Department of Applied Animal Science and Welfare, Swedish University of Agricultural Sciences, Box 7024, 750 07 Uppsala
-g Arador Innovations, Kamreerintie 10, 02770 Espoo, Finland
-h Research Centre for Animal Welfare, P.O. Box 66, 00014 University of Helsinki, Finland
+a Adaptation Physiology Group, Department of Animal Sciences, Wageningen University and Research, Wageningen, The Netherlands
+
+b Department of Animal and Veterinary Sciences, Aarhus University, Tjele, Denmark
+
+c Animal Welfare Program, Institute of Agrifood Research and Technology, Monells, Spain
+
+d Department of Animal Genetics, French National Institute for Agriculture, Food, and Environment, Centre de Toulouse Midi-Pyrénées, Castanet Tolosan cedex, France
+
+e Research Institute for Farm Animal Biology (FBN), Dummerstorf, Germany
+
+f Department of Applied Animal Science and Welfare, Swedish University of Agricultural Sciences, Uppsala, Sweden
+
+g Arador Innovations, Espoo, Finland
+
+h Research Centre for Animal Welfare, University of Helsinki, Helsinki, Finland
+
 
 Corresponding author: Liza R. Moscovice, email: moscovice@fbn-dummerstorf.de
 
