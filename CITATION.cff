@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Reimert
+    given-names: Inonge
+    orcid: https://orcid.org/0000-0002-3610-5037
+ - family-names: Franchi
+    given-names: Guilherme Amorim
+    orcid: https://orcid.org/0000-0001-7653-6512
+ - family-names: Bagaria
+    given-names: Marc
+    orcid: https://orcid.org/0000-0002-5218-1822
+ - family-names: Canario
+    given-names: Laurianne
+    orcid: none
+ - family-names: Bolhuis
+    given-names: J. Elizabeth
+    orcid: https://orcid.org/0000-0003-1417-969X
+ - family-names: Düpjan
+    given-names: Sandra
+    orcid: https://orcid.org/0000-0003-0492-9151
+ - family-names: Verbeek
+    given-names: Else
+    orcid: none
+ - family-names: Fàbrega
+    given-names: Emma
+    orcid: https://orcid.org/0000-0002-1877-8254
+ - family-names: Pedersen
+    given-names: Lene Juul
+    orcid: https://orcid.org/0000-0002-3695-2332
+ - family-names: Telkänranta
+    given-names: Helena
+    orcid: none
+  - family-names: Eggert
+    given-names: Anja
+    orcid: https://orcid.org/0000-0003-3893-6851
+  - family-names: Moscovice
+    given-names: Liza R.
+    orcid: https://orcid.org/0000-0002-1823-7757
+title: "PigWeb_cross-institutes"
+version: 0.1
+doi: 
+date-released: 2025-01-25
+license: CC-BY 4.0
+repository-code: https://github.com/AnjaEggert/PigWeb_cross-institutes
