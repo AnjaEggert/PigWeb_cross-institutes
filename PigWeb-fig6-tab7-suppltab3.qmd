@@ -1,0 +1,419 @@
+---
+title: "PigWeb: behavior-ears"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-behavior"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(rstatix)
+library(glmmTMB)
+library(car)
+library(DHARMa)
+library(patchwork)
+```
+
+# Scripts, etc.
+
+```{r}
+glmmTMBcontr = glmmTMBControl(optimizer = optim, 
+                              optArgs   = list(method="BFGS"))
+```
+
+```{r}
+my_theme = theme_classic() +
+  theme(text = element_text(family = "sans"),
+        plot.title   = element_text(face = "plain", size = 16),
+        axis.title   = element_text(face = "bold", size = 16),
+        axis.text    = element_text(size = 14, angle = 0, vjust = 0.5),
+        legend.title = element_text(face = "bold", size = 16),
+        legend.text  = element_text(face = "plain", size = 16),
+        strip.text   = element_text(size = 16),
+        legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r}
+set.seed(1989)
+```
+
+# Data
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-behavior.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(date           = dmy(date),
+         date.f         = as.factor(date),
+         time           = hms(time),
+         institute      = fct_relevel(institute, "AU", "INRAE", "IRTA", "WUR"),
+         institute      = relevel(institute, ref = "AU"),
+         sample         = relevel(sample,    ref = "pre"),
+         context        = relevel(context,   ref = "negative"),
+         time_collect   = hour(time) + minute(time)/60,
+         time_collect.z = as.vector(scale(time_collect)),
+         space_allowance       = pen_space_m2/(group_weight_kg^0.66),
+         space_allowance.log.z = as.vector(scale(log(space_allowance)))) |> 
+  mutate(prop_ear_forward = (ear_forward/scans_ear_coded),
+         prop_ear_backward = (ear_backward/scans_ear_coded),
+         # small transformation to prevent zero's in the data
+         prop_ear_forward.trans  = (prop_ear_forward*(nrow(dat)-1)+0.5)/nrow(dat),
+         prop_ear_backward.trans = (prop_ear_backward*(nrow(dat)-1)+0.5)/nrow(dat)) 
+```
+
+# Descriptive statistics across context
+
+Pooled for all institutes:
+
+```{r}
+dat |> 
+  group_by(context) |> 
+  rstatix::get_summary_stats(prop_ear_forward, prop_ear_backward,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Text for Fig. 6") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) |> 
+  scroll_box()
+```
+
+# Both ears forward
+
+## Binomial model: no interactions
+
+Fitting model on proportion of ears forward of all scans (transformed values with no zero's). Model without interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.ears.forw <- glmmTMB(prop_ear_forward.trans ~
+                           context +
+                           institute +
+                           space_allowance.log.z + 
+                           offset(log(scans_ear_coded)) +
+                           (1|date) + 
+                           (1|pig_group_unique) + 
+                           (1|pig_id_unique),
+                         data      = dat,
+                         family    = beta_family(link = "logit"), 
+                         control   = glmmTMBcontr)
+```
+
+Reduced model, without `context`:
+
+```{r}
+mod.ears.forw.red <- glmmTMB(prop_ear_forward.trans ~
+                               institute +
+                               space_allowance.log.z + 
+                               offset(log(scans_ear_coded)) +
+                               (1|date) + 
+                               (1|pig_group_unique) + 
+                               (1|pig_id_unique),
+                             data      = dat,
+                             family    = beta_family(link="logit"), 
+                             control   = glmmTMBcontr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.ears.forw.red, mod.ears.forw, test = "Chisq")
+```
+
+### Final model
+
+Model summary, focus on estimates:
+
+```{r}
+round(summary(mod.ears.forw)$coefficients$cond, 2)
+```
+
+Fixed effects
+
+```{r}
+round(drop1(mod.ears.forw,
+            test = "Chisq"), 3)
+
+car::Anova(mod.ears.forw,
+           test.statistic = "Chisq",
+           type = 2) # as no interaction, otherwise set type = 3
+```
+
+### Model diagnostics
+
+Collinearity:
+
+```{r}
+xx=lm(prop_ear_forward.trans ~ 
+        context + 
+        institute + 
+        space_allowance.log.z, 
+      data = dat)
+car::vif(xx) 
+```
+
+Zero inflation:
+
+```{r}
+DHARMa::testZeroInflation(mod.ears.forw)
+```
+
+# Both ears backward
+
+## Binomial model: no interactions
+
+Fitting model on proportion of ears backward of all scans (transformed values with no zero's). Model without interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.ears.back <- glmmTMB(prop_ear_backward.trans ~
+                           context +
+                           institute +
+                           space_allowance.log.z + 
+                           offset(log(scans_ear_coded)) +
+                           (1|date) + 
+                           (1|pig_group_unique) + 
+                           (1|pig_id_unique),
+                         data      = dat,
+                         family    = beta_family(link = "logit"), 
+                         control   = glmmTMBcontr)
+```
+
+Reduced model, without `context`:
+
+```{r}
+mod.ears.back.red <- glmmTMB(prop_ear_backward.trans ~
+                               institute +
+                               space_allowance.log.z + 
+                               offset(log(scans_ear_coded)) +
+                               (1|date) + 
+                               (1|pig_group_unique) + 
+                               (1|pig_id_unique),
+                             data      = dat,
+                             family    = beta_family(link = "logit"), 
+                             control   = glmmTMBcontr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.ears.back.red, mod.ears.back, test = "Chisq")
+```
+
+### Final model
+
+Model summary
+
+```{r}
+round(summary(mod.ears.back)$coefficients$cond, 2)
+```
+
+Fixed effects
+
+```{r}
+round(drop1(mod.ears.back,
+            test = "Chisq"), 3)
+
+car::Anova(mod.ears.back,
+           test.statistic = "Chisq",
+           type = 2) # as no interaction, otherwise set type = 3
+```
+
+### Model diagnostics
+
+Collinearity:
+
+```{r}
+xx <- lm(prop_ear_backward.trans ~ 
+        context + 
+        institute + 
+        space_allowance.log.z, 
+      data = dat)
+car::vif(xx) 
+```
+
+Zero inflation:
+
+```{r}
+DHARMa::testZeroInflation(mod.ears.back)
+```
+
+# Figures
+
+## Both ears forward
+
+There are 35 NA's in the data:
+
+```{r}
+summary(dat$prop_ear_forward)
+```
+
+```{r}
+plot.forw <- dat |> 
+  mutate(context_jit = jitter(as.numeric(context), 0.3)) |> 
+  
+  ggplot(aes(y = prop_ear_forward)) + 
+  geom_boxplot(aes(x = context),
+               col = "black", fill = NA, 
+               outlier.shape = NA, width=0.5,
+               position = position_dodge(0.5)) +
+  geom_line(aes(x = context_jit, group = pig_id_unique), 
+            col = "grey80", linewidth = 0.2) + 
+  geom_point(aes(x = context_jit, 
+                 col = institute, 
+                 shape = institute), 
+             size = 3, alpha = 0.7) + 
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  scale_y_continuous(limits=c(-0.1, 1.1), 
+                     breaks = seq(0,1,0.2)) +
+  labs(x   = "Context",
+       y   = "Ears forward (proportions)",
+       # Matching title ensures a single legend
+       col = "Institutes",
+       shape = "Institutes") +
+  my_theme
+```
+
+```{r}
+plot.forw
+```
+
+```{r, eval = FALSE}
+png("./plots/ears-forward-prop-context.png",
+    width = 150, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.forw
+
+dev.off()
+```
+
+## Both ears backward
+
+There are 35 NA's in the data:
+
+```{r}
+summary(dat$prop_ear_backward)
+```
+
+```{r}
+plot.back <- dat |> 
+  mutate(context_jit = jitter(as.numeric(context), 0.3)) |> 
+  
+  ggplot(aes(y = prop_ear_backward)) + 
+  geom_boxplot(aes(x = context),
+               col = "black", fill = NA, 
+               outlier.shape = NA, width=0.5,
+               position = position_dodge(0.5)) +
+  geom_line(aes(x = context_jit, group = pig_id_unique), 
+            col = "grey80", linewidth = 0.2) + 
+  geom_point(aes(x = context_jit, 
+                 col = institute, 
+                 shape = institute), 
+             size = 3, alpha = 0.7) + 
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  scale_y_continuous(limits=c(-0.1, 1.1), 
+                     breaks = seq(0,1,0.2)) +
+  labs(x   = "Context",
+       y   = "Ears backward (proportions)",
+       # Matching title ensures a single legend
+       col = "Institutes",
+       shape = "Institutes") +
+  my_theme
+```
+
+```{r}
+plot.back
+```
+
+```{r, eval = FALSE}
+png("./plots/ears-backward-prop-context.png",
+    width = 150, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.back
+
+dev.off()
+```
+
+## Figure combined: (A) ears forward and (B) ears backward
+
+```{r}
+combined <- plot.forw + plot.back & 
+  theme(legend.position = "top")
+
+combined + 
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+```
+
+```{r, eval = FALSE}
+png("./plots/ears-forw-backw-prop-context.png",
+    width = 300, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+combined + 
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+
+dev.off()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("rstatix")
+citation("glmmTMB")
+citation("car")
+citation("DHARMa")
+citation("patchwork")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```

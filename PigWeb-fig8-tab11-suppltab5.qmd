@@ -1,0 +1,275 @@
+---
+title: "PigWeb: PCA"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-PCA"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(mixOmics)
+library(patchwork)
+library(ggrepel)
+```
+
+# Scripts, etc.
+
+```{r}
+my_theme = theme_classic() +
+  theme(text = element_text(family = "sans"),
+        plot.title   = element_text(face = "plain", size = 16),
+        axis.title   = element_text(face = "plain", size = 16),
+        axis.text    = element_text(size = 14, angle = 0, vjust = 0.5),
+        legend.title = element_text(face = "plain", size = 16),
+        legend.text  = element_text(face = "plain", size = 16),
+        strip.text   = element_text(size = 16),
+        legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+# Data
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-PCA.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(k_space = testpen_space_m2/(weight_testsubjects^0.66)) |> 
+  mutate(date          = dmy(date),
+         date.f        = as.factor(date),
+         k_space.log.z = as.vector(scale(log(k_space))),
+         context       = relevel(context, ref = "positive"),
+         #hr_min        = hour(time) + minute(time)/60,
+         hr_min.z      = as.vector(scale(hr_min))) |> 
+  # select data for PCA
+  dplyr::select(pig_id_unique,
+                institute,
+                context,
+                CORT_change, # logpost-logpre
+                OXT_change, # logpost-logpre
+                play,
+                escape,
+                inactivity,
+                ears_forward,
+                ears_backward)
+```
+
+# Run PCA
+
+```{r}
+result.pca <- mixOmics::pca(dat |> 
+                              dplyr::select(!c(pig_id_unique,
+                                            institute, 
+                                            context)),
+                            center     = TRUE, 
+                            scale      = TRUE, 
+                            ncomp      = 5,  
+                            multilevel = dat$pig_id_unique) 
+```
+
+## PCA results
+
+```{r}
+print(result.pca)
+plotLoadings(result.pca)
+selectVar(result.pca, comp = 1)$value
+selectVar(result.pca, comp = 2)$value
+selectVar(result.pca, comp = 3)$value
+```
+
+# Figures (manual biplots)
+
+## Extraction from `result.pca` object
+
+Extract sample points:
+
+```{r}
+sample_scores <- result.pca$variates$X
+
+biplot_scores <- as_tibble(sample_scores[, 1:2]) |> 
+  mutate(pig_id_unique = dat$pig_id_unique,
+         context       = dat$context,
+         institute     = dat$institute)
+```
+
+Extract variable loadings and scale the loadings for better visualization:
+
+```{r}
+variable_loadings <- result.pca$loadings$X
+biplot_loadings   <- as_tibble(variable_loadings[, 1:2])
+
+scaling_factor    <- max(abs(biplot_scores[,1:2])) / max(abs(biplot_loadings[,1:2]))
+
+biplot_loadings <- biplot_loadings |> 
+  mutate(PC1 = PC1 * scaling_factor,
+         PC2 = PC2 * scaling_factor) |> 
+  mutate(variable = result.pca$names$X)
+```
+
+## Figure 8a: PCA colourd by context
+
+```{r}
+plot.context <- ggplot() +
+  # Add sample points
+  geom_point(data = biplot_scores, 
+             aes(x = PC1, y = PC2, 
+                 col   = context,
+                 shape = context), 
+             size = 3, alpha = 0.7) +
+  scale_colour_manual(values = c("darkturquoise", "deeppink2")) +
+  scale_shape_manual(values = c(19, 19)) +
+  scale_x_continuous(limits=c(-4.2, 4.2), 
+                     breaks = seq(-4,4,2)) +
+  scale_y_continuous(limits=c(-4.2, 4.2), 
+                     breaks = seq(-4,4,2)) +
+  # Add variable arrows
+  geom_segment(data = biplot_loadings, 
+               aes(x = 0, y = 0, xend = PC1, yend = PC2),
+               arrow = arrow(length = unit(0.2, "cm")), color = "black") +
+  geom_text_repel(data = biplot_loadings, 
+                  aes(x = PC1, y = PC2, label = variable), 
+                  nudge_x = ifelse(biplot_loadings$PC1 > 0, 0.2, -0.2),
+                  nudge_y = ifelse(biplot_loadings$PC2 > 0, 0.2, -0.2),
+                  color = "black", size = 5) +
+  labs(x = "PC1: 39%", 
+       y = "PC2: 22%",
+       # Matching title ensures a single legend
+       col   = "Context",
+       shape = "Context") +
+  my_theme
+```
+
+```{r}
+plot.context
+```
+
+```{r, eval = FALSE}
+png("./plots/PCA-context.png",
+    width = 180, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.context
+
+dev.off()
+```
+
+## Figure 8b: PCA colourd by institute
+
+```{r}
+plot.institute <- ggplot() +
+  # Add sample points
+  geom_point(data = biplot_scores, 
+             aes(x = PC1, y = PC2, 
+                 col   = institute,
+                 shape = institute), 
+             size = 3, alpha = 0.7) +
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  scale_x_continuous(limits=c(-4.2, 4.2), 
+                     breaks = seq(-4,4,2)) +
+  scale_y_continuous(limits=c(-4.2, 4.2), 
+                     breaks = seq(-4,4,2)) +
+  # Add variable arrows
+  geom_segment(data = biplot_loadings, 
+               aes(x = 0, y = 0, xend = PC1, yend = PC2),
+               arrow = arrow(length = unit(0.2, "cm")), color = "black") +
+  geom_text_repel(data = biplot_loadings, 
+                  aes(x = PC1, y = PC2, label = variable), 
+                  nudge_x = ifelse(biplot_loadings$PC1 > 0, 0.2, -0.2),
+                  nudge_y = ifelse(biplot_loadings$PC2 > 0, 0.2, -0.2),
+                  color = "black", size = 5) +
+  labs(x = "PC1: 39%", 
+       y = "PC2: 22%",
+       # Matching title ensures a single legend
+       col   = "Institute",
+       shape = "Institute") +
+  my_theme
+```
+
+```{r}
+plot.institute
+```
+
+```{r, eval = FALSE}
+png("./plots/PCA-institute.png",
+    width = 180, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.institute
+
+dev.off()
+```
+
+### Figure 8a+b combined: (A) colourd by context and (B) by institute
+
+```{r}
+combined <- plot.context + plot.institute & 
+  theme(legend.position = "top")
+
+combined + 
+  #plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+```
+
+```{r, eval = FALSE}
+png("./plots/PCA-context-institute.png",
+    width = 330, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+combined + 
+  #plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+
+dev.off()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("mixOmics")
+citation("patchwork")
+citation("ggrepel")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```

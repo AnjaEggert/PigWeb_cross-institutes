@@ -1,0 +1,150 @@
+---
+title: "PigWeb: behavioral indicators"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-behavior"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(rstatix)
+```
+
+# Data
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-behavior.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(date           = dmy(date),
+         time           = hms(time),
+         institute      = fct_relevel(institute, "AU", "INRAE", "IRTA", "WUR"),
+         institute      = relevel(institute, ref = "AU"),
+         sample         = relevel(sample,    ref = "pre"),
+         context        = relevel(context,   ref = "negative"),
+         scans_inactive.prop = scans_inactive/scans_activity_coded,
+         ear_forward.prop    = ear_forward/scans_ear_coded,
+         ear_backward.prop   = ear_backward/scans_ear_coded)
+```
+
+# Descriptive statistics
+
+## Locomotor play across institutes and context
+
+```{r}
+dat |> 
+  group_by(institute, context) |> 
+  rstatix::get_summary_stats(locomotor_play,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Table 3: Behavioral indicators") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Escape events across institutes and context
+
+```{r}
+dat |> 
+  group_by(institute, context) |> 
+  rstatix::get_summary_stats(escape_events,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Table 3: Behavioral indicators") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Proportion scans inactive across institutes and context
+
+```{r}
+dat |> 
+  group_by(institute, context) |> 
+  rstatix::get_summary_stats(scans_inactive.prop,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Table 3: Behavioral indicators") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Proportion scans ears forward across institutes and context
+
+```{r}
+dat |> 
+  group_by(institute, context) |> 
+  rstatix::get_summary_stats(ear_forward.prop,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Table 3: Behavioral indicators") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Proportion scans ears backward across institutes and context
+
+```{r}
+dat |> 
+  group_by(institute, context) |> 
+  rstatix::get_summary_stats(ear_backward.prop,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Table 3: Behavioral indicators") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("rstatix")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```

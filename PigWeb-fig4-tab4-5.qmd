@@ -1,0 +1,544 @@
+---
+title: "PigWeb: locomotor play and escape events"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-behavior"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(rstatix)
+library(glmmTMB)
+library(car)
+library(DHARMa)
+library(patchwork)
+library(emmeans)
+```
+
+# Scripts, etc.
+
+```{r}
+glmmTMBcontr = glmmTMBControl(optimizer = optim, 
+                              optArgs   = list(method="BFGS"))
+```
+
+```{r}
+my_theme = theme_classic() +
+  theme(text = element_text(family = "sans"),
+        plot.title   = element_text(face = "plain", size = 16),
+        axis.title   = element_text(face = "bold", size = 16),
+        axis.text    = element_text(size = 14, angle = 0, vjust = 0.5),
+        legend.title = element_text(face = "bold", size = 16),
+        legend.text  = element_text(face = "plain", size = 16),
+        strip.text   = element_text(size = 16),
+        legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r}
+set.seed(1989)
+```
+
+# Data
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-behavior.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(date          = dmy(date),
+         date.f        = as.factor(date),
+         institute     = relevel(institute, ref = "AU"),
+         sample        = relevel(sample,    ref = "pre"),
+         context       = relevel(context,   ref = "negative"),
+         space_allowance       = pen_space_m2/(group_weight_kg^0.66),
+         space_allowance.log.z = as.vector(scale(log(space_allowance)))) |> 
+  mutate(prop_scans_inactive       = (scans_inactive/scans_activity_coded),
+         # small transformation to prevent zero's in the data
+         prop_scans_inactive.trans = (prop_scans_inactive*(nrow(dat)-1)+0.5)/nrow(dat)) 
+```
+
+# Descriptive statistics across context
+
+Pooled for all institutes:
+
+```{r}
+dat |> 
+  group_by(context) |> 
+  rstatix::get_summary_stats(locomotor_play, escape_events,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable) |> 
+  mutate(across(c(mean, sd), ~ round(., 2))) |> 
+  kable(caption = "Text for Fig. 4") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+# Locomotor play
+
+## Binomial model: no interactions
+
+Model without interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.locom <- glmmTMB(locomotor_play ~
+                       context +
+                       institute +
+                       space_allowance.log.z + 
+                       (1|date) + 
+                       (1|pig_group_unique) + 
+                       (1|pig_id_unique),
+                     data      = dat,
+                     family    = "nbinom2", 
+                     ziformula = ~ 1, 
+                     control   = glmmTMBcontr)
+```
+
+Reduced model, without `context`:
+
+```{r}
+mod.locom.red <- glmmTMB(locomotor_play ~
+                           institute +
+                           space_allowance.log.z + 
+                           (1|date) + 
+                           (1|pig_group_unique) + 
+                           (1|pig_id_unique),
+                         data      = dat,
+                         family    = "nbinom2", 
+                         ziformula = ~ 1, 
+                         control   = glmmTMBcontr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.locom.red, mod.locom, test = "Chisq")
+```
+
+### Final model
+
+Get effect estimates and standard errors of the model:
+
+```{r}
+round(summary(mod.locom)$coefficients$cond, 2)
+```
+
+Get *p* values of fixed effects. Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.locom,
+            test = "Chisq"), 3)
+
+car::Anova(mod.locom,
+           test.statistic = "Chisq",
+           type = 2) # as no interaction, otherwise set type = 3
+```
+
+### Model diagnostics
+
+Collinearity:
+
+```{r}
+xx=lm(locomotor_play ~ 
+        context + 
+        institute + 
+        space_allowance.log.z, 
+      data = dat)
+car::vif(xx) 
+```
+
+Zero inflation:
+
+```{r}
+DHARMa::testZeroInflation(mod.locom)
+```
+
+### Emmeans
+
+```{r}
+mod.locom.emm <- emmeans(mod.locom,
+                         pairwise ~ institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.locom.emm
+```
+
+# Escape
+
+AU had no escape behavior in either context, so should not be included in escape model.
+
+## Binomial model: no interactions
+
+Model without interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.escap <- glmmTMB(escape_events ~
+                       context +
+                       institute +
+                       space_allowance.log.z + 
+                       (1|date) + 
+                       (1|pig_group_unique) + 
+                       (1|pig_id_unique),
+                     data = dat |> 
+                       dplyr::filter(institute != "AU") |> 
+                       droplevels(),
+                     family    = "nbinom2", 
+                     ziformula = ~ 1, 
+                     control   = glmmTMBcontr)
+```
+
+Reduced model, without `context`:
+
+```{r}
+mod.escap.red <- glmmTMB(escape_events ~
+                           institute +
+                           space_allowance.log.z + 
+                           (1|date) + 
+                           (1|pig_group_unique) + 
+                           (1|pig_id_unique),
+                         data = dat |> 
+                           dplyr::filter(institute != "AU") |> 
+                           droplevels(),
+                         family    = "nbinom2", 
+                         ziformula = ~ 1, 
+                         control   = glmmTMBcontr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.escap.red, mod.escap, test = "Chisq")
+```
+
+### Final model
+
+Get effect estimates and standard errors of the model:
+
+```{r}
+round(summary(mod.escap)$coefficients$cond, 2)
+```
+
+Get *p* values of fixed effects. Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.escap,
+            test = "Chisq"), 3)
+
+car::Anova(mod.escap,
+           test.statistic = "Chisq",
+           type = 2) # as no interaction, otherwise set type = 3
+```
+
+### Model diagnostics
+
+Collinearity:
+
+```{r}
+xx=lm(escape_events ~ 
+        context + 
+        institute + 
+        space_allowance.log.z, 
+      data = dat)
+car::vif(xx) 
+```
+
+Zero inflation:
+
+```{r}
+DHARMa::testZeroInflation(mod.escap)
+```
+
+### Emmeans
+
+```{r, eval = FALSE}
+mod.escap.emm <- emmeans(mod.escap,
+                         pairwise ~ institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.escap.emm
+```
+
+# Scans inactive
+
+## Binomial model: no interactions
+
+Model without interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.scans <- glmmTMB(prop_scans_inactive.trans ~
+                       context +
+                       institute +
+                       space_allowance.log.z + 
+                       offset(log(scans_activity_coded)) +
+                       (1|date) + 
+                       (1|pig_group_unique) + 
+                       (1|pig_id_unique),
+                     data      = dat,
+                     family    = beta_family(link="logit"), 
+                     ziformula = ~ 1, 
+                     control   = glmmTMBcontr)
+```
+
+Reduced model, without `context`:
+
+```{r}
+mod.scans.red <- glmmTMB(prop_scans_inactive.trans ~
+                           institute +
+                           space_allowance.log.z + 
+                           offset(log(scans_activity_coded)) +
+                           (1|date) + 
+                           (1|pig_group_unique) + 
+                           (1|pig_id_unique),
+                         data      = dat,
+                         family    = beta_family(link="logit"), 
+                         ziformula = ~ 1, 
+                         control   = glmmTMBcontr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.scans.red, mod.scans, test = "Chisq")
+```
+
+### Final model
+
+Get effect estimates and standard errors of the model:
+
+```{r}
+round(summary(mod.scans)$coefficients$cond, 2)
+```
+
+Get *p* values of fixed effects. Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.scans,
+            test = "Chisq"), 3)
+
+car::Anova(mod.scans,
+           test.statistic = "Chisq",
+           type = 2) # as no interaction, otherwise set type = 3
+```
+
+### Model diagnostics
+
+Collinearity:
+
+```{r}
+xx=lm(prop_scans_inactive.trans ~ 
+        context + 
+        institute + 
+        space_allowance.log.z, 
+      data = dat)
+car::vif(xx) 
+```
+
+Zero inflation:
+
+```{r}
+DHARMa::testZeroInflation(mod.scans)
+```
+
+### Emmeans
+
+```{r}
+mod.scans.emm <- emmeans(mod.scans,
+                         pairwise ~ institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.scans.emm
+```
+
+# Figures
+
+## Figure 4: Locomotor play all institutes
+
+There are 8 NA's in the data:
+
+```{r}
+summary(dat$locomotor_play)
+```
+
+```{r}
+plot.locom <- dat |> 
+  mutate(context.jit = jitter(as.numeric(context), 0.3)) |> 
+  mutate(locomotor_play.jit = jitter(as.numeric(locomotor_play), 0.3)) |> 
+  
+  ggplot(aes(y = locomotor_play.jit)) + 
+  geom_boxplot(aes(x = context),
+               col = "black", fill = NA, 
+               outlier.shape = NA, width=0.5,
+               position = position_dodge(0.5)) +
+  geom_line(aes(x = context.jit, group = pig_id_unique), 
+            col = "grey80", linewidth = 0.2) + 
+  geom_point(aes(x = context.jit, 
+                 col = institute, 
+                 shape = institute), 
+             size = 3, alpha = 0.7) + 
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  scale_y_continuous(limits=c(-0.1, 7.1), 
+                     breaks = seq(0,7,1)) +
+  labs(x   = "Context",
+       y   = "Locomotor play (counts)",
+       # Matching title ensures a single legend
+       col = "Institutes",
+       shape = "Institutes") +
+  my_theme
+```
+
+```{r}
+plot.locom
+```
+
+```{r, eval = FALSE}
+png("./plots/locom-play-context.png",
+    width = 150, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.locom
+
+dev.off()
+```
+
+## Figure 5: Escape events all institutes
+
+There are 8 NA's in the data:
+
+```{r}
+summary(dat$escape_events)
+```
+
+```{r}
+plot.escap <- dat |> 
+  mutate(context.jit = jitter(as.numeric(context), 0.3)) |> 
+  mutate(escape_events.jit = jitter(as.numeric(escape_events), 0.3)) |> 
+  
+  ggplot(aes(y = escape_events.jit)) + 
+  geom_boxplot(aes(x = context),
+               col = "black", fill = NA, 
+               outlier.shape = NA, width=0.5,
+               position = position_dodge(0.5)) +
+  geom_line(aes(x = context.jit, group = pig_id_unique), 
+            col = "grey80", linewidth = 0.2) + 
+  geom_point(aes(x = context.jit, 
+                 col = institute,
+                 shape = institute), 
+             size = 3, alpha = 0.7) + 
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  scale_y_continuous(limits=c(-0.1, 30.1),
+                     breaks = seq(0,30,5)) +
+  labs(x   = "Context",
+       y   = "Escape events (counts)",
+       # Matching title ensures a single legend
+       col = "Institutes",
+       shape = "Institutes") +
+  my_theme
+```
+
+```{r}
+plot.escap
+```
+
+```{r, eval = FALSE}
+png("./plots/escape-context.png",
+    width = 150, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot.escap
+
+dev.off()
+```
+
+## Figure 4+5 combined: (A) Locomotor play and (B) escape events
+
+```{r}
+combined <- plot.locom + plot.escap & 
+  theme(legend.position = "top")
+
+combined + 
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+```
+
+```{r, eval = FALSE}
+png("./plots/locom-escape-context.png",
+    width = 300, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+combined + 
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 16),
+        plot.tag.position = c(.15, .88))
+
+dev.off()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("rstatix")
+citation("glmmTMB")
+citation("car")
+citation("DHARMa")
+citation("patchwork")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```

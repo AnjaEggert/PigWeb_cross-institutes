@@ -1,0 +1,143 @@
+---
+title: "PigWeb: pig attributes and hormones"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-behavior"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(rstatix)
+```
+
+# Data
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-physiology.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(date           = dmy(date),
+         #time          = hms(time),
+         datetime       = as.POSIXct(paste(date, time)),
+         institute      = fct_relevel(institute, "AU", "INRAE", "IRTA", "WUR"),
+         institute      = relevel(institute, ref = "AU"),
+         sample         = relevel(sample,    ref = "pre"),
+         context        = relevel(context,   ref = "negative"))
+```
+
+# Descriptive statistics across institutes
+
+## Age (days)
+
+Calculate summary statistics of age at the beginning of the experiment:
+
+```{r}
+dat |>
+  group_by(pig_group_unique, pig_id_unique) |> 
+  slice_min(order_by = datetime, n = 1) |> 
+  ungroup() |> 
+  group_by(institute) |> 
+  rstatix::get_summary_stats(age_days,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 1))) |> 
+  kable(caption = "Table 2: Average attributes and hormones") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Individual weight (kg)
+
+Calculate summary statistics of age at the beginning of the experiment:
+
+```{r}
+dat |>
+  group_by(pig_group_unique, pig_id_unique) |> 
+  slice_min(order_by = datetime, n = 1) |> 
+  ungroup() |> 
+  group_by(institute) |> 
+  rstatix::get_summary_stats(weight_start_kg,
+                             show = c("mean","sd")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(mean, sd), ~ round(., 1))) |> 
+  kable(caption = "Table 2: Average attributes and hormones") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Cortisol (ng/ml)
+
+```{r}
+dat |> 
+  group_by(institute) |> 
+  rstatix::get_summary_stats(cort_ngmL,
+                             show = c("median","q1", "q3")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(median, q1, q3), ~ round(., 2))) |> 
+  kable(caption = "Table 2: Average attributes and hormones") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+## Oxytocin (pg/ml)
+
+```{r}
+dat |> 
+  group_by(institute) |> 
+  rstatix::get_summary_stats(oxyt_pgmL,
+                             show = c("median","q1", "q3")) |>
+  ungroup() |> 
+  arrange(variable, institute) |> 
+  mutate(across(c(median, q1, q3), ~ round(., 1))) |> 
+  kable(caption = "Table 2: Average attributes and hormones") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
+  scroll_box()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("rstatix")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```

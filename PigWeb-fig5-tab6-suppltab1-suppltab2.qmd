@@ -1,0 +1,488 @@
+---
+title: "PigWeb: cortisol"
+author: "Liza Moscoviche & Anja Eggert"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+execute:
+  eval: true
+  warning: false
+  message: false
+  echo: true
+# project:
+#   input-dir: "./PigWeb-hormones"
+---
+
+# Libraries
+
+```{r, libraries}
+library(kableExtra)
+library(tidyverse)
+library(rstatix)
+library(lmerTest)
+library(car)
+library(performance)
+library(emmeans)
+```
+
+# Scripts, etc.
+
+```{r}
+contr = lmerControl(optimizer   = "bobyqa",
+                    optCtrl     = list(maxfun = 10000000),
+                    calc.derivs = FALSE)
+```
+
+```{r}
+my_theme = theme_classic() +
+  theme(text = element_text(family = "sans"),
+        plot.title   = element_text(face = "plain", size = 16),
+        axis.title   = element_text(face = "bold", size = 16),
+        axis.text    = element_text(size = 14, angle = 0, vjust = 0.5),
+        legend.title = element_text(face = "bold", size = 16),
+        legend.text  = element_text(face = "plain", size = 16),
+        strip.text   = element_text(size = 16),
+        legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r}
+set.seed(1989)
+```
+
+# Data
+
+Analysis of cortisol data from all 4 institutes, positive and negative context and pre and post samples.
+
+## Read data
+
+```{r}
+dat <- read_csv("./data/PigWeb-physiology.csv",
+                show_col_types = FALSE)
+```
+
+## Process data
+
+```{r}
+dat <- dat |> 
+  mutate(across(where(is.character), as.factor)) |> 
+  mutate(date           = dmy(date),
+         date.f         = as.factor(date),
+         institute      = fct_relevel(institute, "AU", "INRAE", "IRTA", "WUR"),
+         institute      = relevel(institute, ref = "AU"),
+         sample         = relevel(sample,    ref = "pre"),
+         context        = relevel(context,   ref = "negative"),
+         time_collect   = hour(time) + minute(time)/60,
+         time_collect.z = as.vector(scale(time_collect)),
+         space_allowance       = pen_space_m2/(group_weight_kg^0.66),
+         space_allowance.log.z = as.vector(scale(log(space_allowance))))
+```
+
+# Descriptive statistics across context
+
+Pooled for all institutes:
+
+```{r}
+dat |> 
+  group_by(context, sample) |> 
+  rstatix::get_summary_stats(cort_ngmL,
+                             show = c("median","q1", "q3")) |>
+  ungroup() |> 
+  arrange(variable) |> 
+  mutate(across(c(median, q1, q3), ~ round(., 2))) |> 
+  kable(caption = "Text for Fig. 4") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) |> 
+  scroll_box()
+```
+
+# Cortisol model: all 4 institutes
+
+Model with 2 interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.cort <- lmerTest::lmer(log(cort_ngmL) ~
+                             sample * context +
+                             sample * institute +
+                             space_allowance.log.z + 
+                             time_collect.z +
+                             (1|date) + 
+                             (1|pig_group_unique) + 
+                             (1|pig_id_unique),
+                           data    = dat,
+                           REML    = FALSE,
+                           control = contr)
+```
+
+Reduced model, without interactions and without `sample` and `context`:
+
+```{r}
+mod.cort.red <- lmerTest::lmer(log(cort_ngmL) ~
+                                 institute +
+                                 space_allowance.log.z + 
+                                 time_collect.z +
+                                 (1|date) + 
+                                 (1|pig_group_unique) + 
+                                 (1|pig_id_unique),
+                               data    = dat,
+                               REML    = FALSE,
+                               control = contr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.cort.red, mod.cort, test = "Chisq")
+```
+
+## Final model
+
+Get effect estimates and standard errors of the model fitted with ML (`REML = FALSE`):
+
+```{r}
+round(summary(mod.cort)$coefficients, 2)
+```
+
+Get *p* values of fixed effects and interactions of the model fitted with REML (`REML = TRUE`). Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.cort |> update(REML = TRUE),
+            test = "Chisq"), 3)
+
+car::Anova(mod.cort |> update(REML = TRUE),
+           test.statistic = "Chisq",
+           type = 3) # as with interaction, otherwise set type = 2
+
+car::Anova(mod.cort |> update(REML = TRUE),
+           test.statistic = "F",
+           type = 3) # as with interaction, otherwise set type = 2
+```
+
+## Model diagnostics
+
+```{r}
+performance::check_model(mod.cort)
+```
+
+## Emmeans
+
+```{r}
+mod.cort.emm1 <- emmeans(mod.cort,
+                         pairwise ~ institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm1
+```
+
+```{r}
+mod.cort.emm2 <- emmeans(mod.cort,
+                         pairwise ~ sample|institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm2
+```
+
+```{r}
+mod.cort.emm3 <- emmeans(mod.cort,
+                         pairwise ~ institute|sample, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm3
+```
+
+```{r}
+mod.cort.emm4 <- emmeans(mod.cort,
+                         pairwise ~ sample|context, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm4
+```
+
+# Cortisol model: all 4 institutes, baseline
+
+Analysis includes only pre-samples ("baseline"), but in both positive and negative context.
+
+## Defining model
+
+Full model:
+
+```{r}
+mod.cort <- lmerTest::lmer(log(cort_ngmL) ~
+                             institute +
+                             space_allowance.log.z + 
+                             time_collect.z +
+                             (1|date) + 
+                             (1|pig_group_unique) + 
+                             (1|pig_id_unique),
+                           data    = dat |> dplyr::filter(sample == "pre"),
+                           REML    = FALSE,
+                           control = contr)
+```
+
+Reduced model, with only random effects included:
+
+```{r}
+mod.cort.red <- lmerTest::lmer(log(cort_ngmL) ~
+                                 (1|date) + 
+                                 (1|pig_group_unique) + 
+                                 (1|pig_id_unique),
+                               data    = dat |> dplyr::filter(sample == "pre"),
+                               REML    = FALSE,
+                               control = contr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.cort.red, mod.cort, test = "Chisq")
+```
+
+## Final model
+
+Get effect estimates and standard errors of the model fitted with ML (`REML = FALSE`):
+
+```{r}
+round(summary(mod.cort)$coefficients, 2)
+```
+
+Get *p* values of fixed effects and interactions of the model fitted with REML (`REML = TRUE`). Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.cort |> update(REML = TRUE),
+            test = "Chisq"), 3)
+
+car::Anova(mod.cort |> update(REML = TRUE),
+           test.statistic = "Chisq",
+           type = 3) # as with interaction, otherwise set type = 2
+
+car::Anova(mod.cort |> update(REML = TRUE),
+           test.statistic = "F",
+           type = 3) # as with interaction, otherwise set type = 2
+```
+
+## Model diagnostics
+
+```{r}
+performance::check_model(mod.cort)
+```
+
+## Emmeans
+
+```{r}
+mod.cort.emm <- emmeans(mod.cort,
+                        pairwise ~ institute, 
+                        data    = dat, 
+                        adjust  = "tukey",
+                        lmer.df = "satterthwaite",
+                        type    = "response")
+
+mod.cort.emm
+```
+
+# Cortisol model: only 3 institutes, without WUR
+
+Model with interactions of fixed effects and random intercepts but constant slope.
+
+Full model:
+
+```{r}
+mod.cort.noWUR <- lmerTest::lmer(log(cort_ngmL) ~
+                                   sample * context +
+                                   sample * institute +
+                                   space_allowance.log.z + 
+                                   time_collect.z +
+                                   (1|date) + 
+                                   (1|pig_group_unique) + 
+                                   (1|pig_id_unique),
+                                 data = dat |> 
+                                   dplyr::filter(institute != "WUR") |> 
+                                   droplevels(),
+                                 REML    = FALSE,
+                                 control = contr)
+```
+
+Reduced model, without interactions and without `sample` and `context`:
+
+```{r}
+mod.cort.noWUR.red <- lmerTest::lmer(log(cort_ngmL) ~
+                                       institute +
+                                       space_allowance.log.z + 
+                                       time_collect.z +
+                                       (1|date) + 
+                                       (1|pig_group_unique) + 
+                                       (1|pig_id_unique),
+                                     data = dat |> 
+                                       dplyr::filter(institute != "WUR") |> 
+                                       droplevels(),
+                                     REML    = FALSE,
+                                     control = contr)
+```
+
+Comparison of reduced and full model:
+
+```{r}
+anova(mod.cort.noWUR.red, mod.cort.noWUR, test = "Chisq")
+```
+
+## Final model
+
+Get effect estimates and standard errors of the model fitted with ML (`REML = FALSE`):
+
+```{r}
+round(summary(mod.cort.noWUR)$coefficients, 2)
+```
+
+Get *p* values of fixed effects and interactions of the model fitted with REML (`REML = TRUE`). Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
+
+```{r}
+round(drop1(mod.cort.noWUR |> update(REML = TRUE),
+            test = "Chisq"), 3)
+
+car::Anova(mod.cort.noWUR |> update(REML = TRUE),
+           test.statistic = "Chisq",
+           type = 3) # as with interaction, otherwise set type = 2
+
+car::Anova(mod.cort.noWUR |> update(REML = TRUE),
+           test.statistic = "F",
+           type = 3) # as with interaction, otherwise set type = 2
+```
+
+## Model diagnostics
+
+```{r}
+performance::check_model(mod.cort.noWUR)
+```
+
+## Emmeans
+
+```{r}
+mod.cort.emm1 <- emmeans(mod.cort.noWUR,
+                         pairwise ~ institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm1
+```
+
+```{r}
+mod.cort.emm2 <- emmeans(mod.cort.noWUR,
+                         pairwise ~ sample|institute, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm2
+```
+
+```{r}
+mod.cort.emm3 <- emmeans(mod.cort.noWUR,
+                         pairwise ~ institute|sample, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm3
+```
+
+```{r}
+mod.cort.emm4 <- emmeans(mod.cort.noWUR,
+                         pairwise ~ sample|context, 
+                         data    = dat, 
+                         adjust  = "tukey",
+                         lmer.df = "satterthwaite",
+                         type    = "response")
+
+mod.cort.emm4
+```
+
+# Figures
+
+## Figure 5: Log-Cortisol all institutes
+
+```{r}
+plot <- dat |>  
+  mutate(jit = jitter(as.numeric(sample), 0.3)) |>  
+  
+  ggplot(aes(y = log(cort_ngmL))) + 
+  geom_boxplot(aes(x = sample),
+               col = "black", fill = NA, 
+               outlier.shape = NA, width=0.5,
+               position = position_dodge(0.5)) +
+  geom_line(aes(x = jit, group = pig_id_unique), 
+            col = "grey80", linewidth = 0.2) + 
+  geom_point(aes(x = jit, 
+                 col = institute,
+                 shape = institute), 
+             size = 2.5, alpha = 0.7) + 
+  scale_colour_manual(values = c("#481568FF", "#32648EFF", "#94D840FF", "#FDE725FF")) +
+  scale_shape_manual(values = c(17, 15, 16, 18)) +
+  facet_wrap(~ context) +
+  labs(x   = "Sample type",
+       y   = "Log(cortisol) (ng/ml)",
+       # Matching title ensures a single legend
+       col = "Institutes",
+       shape = "Institutes") +
+  my_theme
+```
+
+```{r}
+plot
+```
+
+```{r, eval = FALSE}
+png("./plots/cort-log-context-type-institute.png",
+    width = 200, height = 180, units = "mm",
+    pointsize = 10, res = 600)
+
+plot
+
+dev.off()
+```
+
+# Citing R
+
+"All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)".
+
+Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, R-Zitieren}
+citation()
+version$version.string
+```
+
+```{r, Pakete-Zitieren}
+citation("kableExtra")
+citation("tidyverse")
+citation("rstatix")
+citation("lmerTest")
+citation("car")
+citation("performance")
+citation("emmeans")
+```
+
+# Session Info
+
+```{r, R-Session}
+sessionInfo()
+```
