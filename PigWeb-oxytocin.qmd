@@ -138,8 +138,7 @@ Comparison of reduced and full model:
 anova(mod.oxyt.red, mod.oxyt, test = "Chisq")
 ```
 
-Final model:
- - remove non-significant interactions 
+Final model: - remove non-significant interactions
 
 ```{r}
 mod.oxyt <- lmerTest::lmer(log(oxyt_pgmL) ~
@@ -215,7 +214,7 @@ emmeans(mod.oxyt,
 
 # Figures
 
-## Suppl. Figure 2: Log-Oxytocin all 4 institutes
+## Suppl. Figure 1: Log-Oxytocin all 4 institutes
 
 ```{r}
 plot <- dat |>  
@@ -236,7 +235,7 @@ plot <- dat |>
   scale_shape_manual(values = c(17, 15, 16, 18)) +
   facet_wrap(~ context) +
   labs(x   = "Sample type",
-       y   = "log(oxytocin) (pg/ml)",
+       y   = "Log(oxytocin) (pg/ml)",
        # Matching title ensures a single legend
        col = "Institutes",
        shape = "Institutes") +
