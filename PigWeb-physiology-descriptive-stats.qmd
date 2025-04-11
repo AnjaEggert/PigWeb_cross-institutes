@@ -52,18 +52,13 @@ Prepare table for pre-post calculations of hormones:
 dat_wide <- dat |> 
   dplyr::select(institute, pig_group_unique, pig_id_unique, 
                 sample, context, 
-                cort_ngmL,oxyt_pgmL,
-                eye_IRT_max, ear_IRT_max) |> 
+                cort_ngmL,oxyt_pgmL) |> 
   pivot_wider(names_from = sample, values_from = c(cort_ngmL,
-                                                   oxyt_pgmL,
-                                                   eye_IRT_max,
-                                                   ear_IRT_max)) |> 
+                                                   oxyt_pgmL)) |> 
   group_by(pig_group_unique, pig_id_unique, context)  |> 
   mutate(
     cort_ngmL.diff = cort_ngmL_post - cort_ngmL_pre,
-    oxyt_pgmL.diff = oxyt_pgmL_post - oxyt_pgmL_pre,
-    eye_IRT_max.diff = eye_IRT_max_post - eye_IRT_max_pre,
-    ear_IRT_max.diff = ear_IRT_max_post - ear_IRT_max_pre) |> 
+    oxyt_pgmL.diff = oxyt_pgmL_post - oxyt_pgmL_pre) |> 
   ungroup()
 ```
 
@@ -90,21 +85,6 @@ dat_wide |>
 dat_wide |> 
   group_by(institute, context) |> 
   rstatix::get_summary_stats(oxyt_pgmL.diff,
-                             show = c("mean","sd")) |>
-  ungroup() |> 
-  arrange(variable, institute) |> 
-  mutate(across(c(mean, sd), ~ round(., 2))) |> 
-  kable(caption = "Table 3: Physiological indicators") |>
-  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 10) |> 
-  scroll_box()
-```
-
-## Change in body temperature across institutes and context
-
-```{r}
-dat_wide |> 
-  group_by(institute, context) |> 
-  rstatix::get_summary_stats(eye_IRT_max.diff, ear_IRT_max.diff,
                              show = c("mean","sd")) |>
   ungroup() |> 
   arrange(variable, institute) |> 

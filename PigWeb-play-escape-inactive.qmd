@@ -314,11 +314,10 @@ mod.scans <- glmmTMB(prop_scans_inactive.trans ~
                      control   = glmmTMBcontr)
 ```
 
-Reduced model, without `context`:
+Reduced model, without `context` and `institute`:
 
 ```{r}
 mod.scans.red <- glmmTMB(prop_scans_inactive.trans ~
-                           institute +
                            space_allowance.log.z + 
                            offset(log(scans_activity_coded)) +
                            (1|date) + 

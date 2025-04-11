@@ -119,11 +119,10 @@ mod.cort <- lmerTest::lmer(log(cort_ngmL) ~
                            control = contr)
 ```
 
-Reduced model, without interactions and without `sample` and `context`:
+Reduced model, without interactions and without `sample`, `context` and `institute`:
 
 ```{r}
 mod.cort.red <- lmerTest::lmer(log(cort_ngmL) ~
-                                 institute +
                                  space_allowance.log.z + 
                                  time_collect.z +
                                  (1|date) + 
@@ -215,87 +214,6 @@ mod.cort.emm4 <- emmeans(mod.cort,
 mod.cort.emm4
 ```
 
-# Cortisol model: all 4 institutes, baseline
-
-Analysis includes only pre-samples ("baseline"), but in both positive and negative context.
-
-## Defining model
-
-Full model:
-
-```{r}
-mod.cort <- lmerTest::lmer(log(cort_ngmL) ~
-                             institute +
-                             space_allowance.log.z + 
-                             time_collect.z +
-                             (1|date) + 
-                             (1|pig_group_unique) + 
-                             (1|pig_id_unique),
-                           data    = dat |> dplyr::filter(sample == "pre"),
-                           REML    = FALSE,
-                           control = contr)
-```
-
-Reduced model, with only random effects included:
-
-```{r}
-mod.cort.red <- lmerTest::lmer(log(cort_ngmL) ~
-                                 (1|date) + 
-                                 (1|pig_group_unique) + 
-                                 (1|pig_id_unique),
-                               data    = dat |> dplyr::filter(sample == "pre"),
-                               REML    = FALSE,
-                               control = contr)
-```
-
-Comparison of reduced and full model:
-
-```{r}
-anova(mod.cort.red, mod.cort, test = "Chisq")
-```
-
-## Final model
-
-Get effect estimates and standard errors of the model fitted with ML (`REML = FALSE`):
-
-```{r}
-round(summary(mod.cort)$coefficients, 2)
-```
-
-Get *p* values of fixed effects and interactions of the model fitted with REML (`REML = TRUE`). Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
-
-```{r}
-round(drop1(mod.cort |> update(REML = TRUE),
-            test = "Chisq"), 3)
-
-car::Anova(mod.cort |> update(REML = TRUE),
-           test.statistic = "Chisq",
-           type = 3) # as with interaction, otherwise set type = 2
-
-car::Anova(mod.cort |> update(REML = TRUE),
-           test.statistic = "F",
-           type = 3) # as with interaction, otherwise set type = 2
-```
-
-## Model diagnostics
-
-```{r}
-performance::check_model(mod.cort)
-```
-
-## Emmeans
-
-```{r}
-mod.cort.emm <- emmeans(mod.cort,
-                        pairwise ~ institute, 
-                        data    = dat, 
-                        adjust  = "tukey",
-                        lmer.df = "satterthwaite",
-                        type    = "response")
-
-mod.cort.emm
-```
-
 # Cortisol model: only 3 institutes, without WUR
 
 Model with interactions of fixed effects and random intercepts but constant slope.
@@ -318,11 +236,10 @@ mod.cort.noWUR <- lmerTest::lmer(log(cort_ngmL) ~
                                  control = contr)
 ```
 
-Reduced model, without interactions and without `sample` and `context`:
+Reduced model, without interactions and without `sample`, `context` and `institute`:
 
 ```{r}
 mod.cort.noWUR.red <- lmerTest::lmer(log(cort_ngmL) ~
-                                       institute +
                                        space_allowance.log.z + 
                                        time_collect.z +
                                        (1|date) + 

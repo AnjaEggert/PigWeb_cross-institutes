@@ -1,7 +1,7 @@
 # PigWeb_cross-institutes
 This repository contains data and source code to reproduce the data and statistical analysis and figures in the manuscript:
 
-"Teaming up for pig welfare: A cross-institute approach to explore novel and robust indicators of emotional valence in pigs"
+"Teaming up for welfare: A cross-institute approach to identify novel and robust indicators of emotion in pigs"
 
 Inonge Reimert(a,1), Guilherme Amorim Franchi(b,1), Marc Bagaria(c,1), Laurianne Canario(d), J. Elizabeth Bolhuis(a), Sandra Düpjan(e), 
 Else Verbeek(f), Emma Fàbrega(c), Lene Juul Pedersen(b), Helena Telkänranta(g,h), Anja Eggert(e), Liza R. Moscovice(e)
