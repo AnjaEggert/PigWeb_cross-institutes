@@ -1,5 +1,5 @@
 ---
-title: "PigWeb: locomotor play and escape events"
+title: "PigWeb: play, escape and inactity"
 author: "Liza Moscoviche & Anja Eggert"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -12,8 +12,6 @@ execute:
   warning: false
   message: false
   echo: true
-# project:
-#   input-dir: "./PigWeb-behavior"
 ---
 
 # Libraries
@@ -185,10 +183,11 @@ mod.locom.emm <- emmeans(mod.locom,
                          pairwise ~ institute, 
                          data    = dat, 
                          adjust  = "tukey",
-                         lmer.df = "satterthwaite",
                          type    = "response")
 
 mod.locom.emm
+
+mod.locom.emm$contrasts %>% confint()
 ```
 
 # Escape
@@ -285,13 +284,14 @@ mod.escap.emm <- emmeans(mod.escap,
                          pairwise ~ institute, 
                          data    = dat, 
                          adjust  = "tukey",
-                         lmer.df = "satterthwaite",
                          type    = "response")
 
 mod.escap.emm
+
+mod.escap.emm$contrasts %>% confint()
 ```
 
-# Scans inactive
+# Inactivity
 
 ## Binomial model: no interactions
 
@@ -300,7 +300,7 @@ Model without interactions of fixed effects and random intercepts but constant s
 Full model:
 
 ```{r}
-mod.scans <- glmmTMB(prop_scans_inactive.trans ~
+mod.inact <- glmmTMB(prop_scans_inactive.trans ~
                        context +
                        institute +
                        space_allowance.log.z + 
@@ -317,7 +317,7 @@ mod.scans <- glmmTMB(prop_scans_inactive.trans ~
 Reduced model, without `context` and `institute`:
 
 ```{r}
-mod.scans.red <- glmmTMB(prop_scans_inactive.trans ~
+mod.inact.red <- glmmTMB(prop_scans_inactive.trans ~
                            space_allowance.log.z + 
                            offset(log(scans_activity_coded)) +
                            (1|date) + 
@@ -332,7 +332,7 @@ mod.scans.red <- glmmTMB(prop_scans_inactive.trans ~
 Comparison of reduced and full model:
 
 ```{r}
-anova(mod.scans.red, mod.scans, test = "Chisq")
+anova(mod.inact.red, mod.inact, test = "Chisq")
 ```
 
 ### Final model
@@ -340,16 +340,16 @@ anova(mod.scans.red, mod.scans, test = "Chisq")
 Get effect estimates and standard errors of the model:
 
 ```{r}
-round(summary(mod.scans)$coefficients$cond, 2)
+round(summary(mod.inact)$coefficients$cond, 2)
 ```
 
 Get *p* values of fixed effects. Using `drop1()`, for factors that are part of interactions, the main effect cannot be tested. In this case `car::Anova` can be used:
 
 ```{r}
-round(drop1(mod.scans,
+round(drop1(mod.inact,
             test = "Chisq"), 3)
 
-car::Anova(mod.scans,
+car::Anova(mod.inact,
            test.statistic = "Chisq",
            type = 2) # as no interaction, otherwise set type = 3
 ```
@@ -370,20 +370,21 @@ car::vif(xx)
 Zero inflation:
 
 ```{r}
-DHARMa::testZeroInflation(mod.scans)
+DHARMa::testZeroInflation(mod.inact)
 ```
 
 ### Emmeans
 
 ```{r}
-mod.scans.emm <- emmeans(mod.scans,
+mod.inact.emm <- emmeans(mod.inact,
                          pairwise ~ institute, 
                          data    = dat, 
                          adjust  = "tukey",
-                         lmer.df = "satterthwaite",
                          type    = "response")
 
-mod.scans.emm
+mod.inact.emm
+
+mod.inact.emm$contrasts %>% confint()
 ```
 
 # Figures

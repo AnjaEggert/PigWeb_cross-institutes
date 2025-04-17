@@ -204,12 +204,16 @@ car::vif(xx)
 As interaction sample\*institute is not significant, we compare here the 4 institutes:
 
 ```{r}
-emmeans(mod.oxyt,
-        pairwise ~ institute, 
-        data    = dat, 
-        adjust  = "tukey",
-        lmer.df = "satterthwaite",
-        type    = "response")$contrasts
+mod.oxyt.emm <- emmeans(mod.oxyt,
+                        pairwise ~ institute, 
+                        data    = dat, 
+                        adjust  = "tukey",
+                        lmer.df = "satterthwaite",
+                        type    = "response")
+
+mod.oxyt.emm
+
+mod.oxyt.emm$contrasts %>% confint()
 ```
 
 # Figures

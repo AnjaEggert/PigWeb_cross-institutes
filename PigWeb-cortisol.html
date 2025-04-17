@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Liza Moscoviche &amp; Anja Eggert">
-<meta name="dcterms.date" content="2025-04-11">
+<meta name="dcterms.date" content="2025-04-17">
 
 <title>PigWeb: cortisol</title>
 <style>
@@ -3362,7 +3362,7 @@ border: 0;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 11, 2025</p>
+      <p class="date">April 17, 2025</p>
     </div>
   </div>
   
@@ -3677,16 +3677,32 @@ Degrees-of-freedom method: satterthwaite
 P value adjustment: tukey method for comparing a family of 4 estimates 
 Tests are performed on the log scale </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm1<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE    0.80 0.170 32.3    0.450     1.42
+ AU / IRTA     1.67 0.442 25.4    0.806     3.46
+ AU / WUR      3.78 0.752 37.9    2.215     6.45
+ INRAE / IRTA  2.09 0.509 21.0    1.057     4.12
+ INRAE / WUR   4.73 0.866 32.7    2.879     7.76
+ IRTA / WUR    2.26 0.536 26.9    1.185     4.33
+
+Results are averaged over the levels of: sample, context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Conf-level adjustment: tukey method for comparing a family of 4 estimates 
+Intervals are back-transformed from the log scale </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>institute, </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>institute, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 institute = AU:
@@ -3735,16 +3751,39 @@ Results are averaged over the levels of: context
 Degrees-of-freedom method: satterthwaite 
 Tests are performed on the log scale </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>institute = AU:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 1.258 0.1450 351    1.003     1.58
+
+institute = INRAE:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 0.868 0.0758 358    0.731     1.03
+
+institute = IRTA:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 1.013 0.1140 375    0.812     1.26
+
+institute = WUR:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 0.596 0.0446 350    0.514     0.69
+
+Results are averaged over the levels of: context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Intervals are back-transformed from the log scale </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> institute<span class="sc">|</span>sample, </span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> institute<span class="sc">|</span>sample, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 sample = pre:
@@ -3790,16 +3829,42 @@ Degrees-of-freedom method: satterthwaite
 P value adjustment: tukey method for comparing a family of 4 estimates 
 Tests are performed on the log scale </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>sample = pre:
+ contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE   0.963 0.216 40.1    0.528     1.75
+ AU / IRTA    1.861 0.514 30.0    0.878     3.95
+ AU / WUR     5.494 1.160 47.5    3.137     9.62
+ INRAE / IRTA 1.933 0.490 24.5    0.961     3.89
+ INRAE / WUR  5.706 1.090 39.2    3.411     9.54
+ IRTA / WUR   2.952 0.730 31.8    1.511     5.77
+
+sample = post:
+ contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE   0.664 0.149 40.0    0.365     1.21
+ AU / IRTA    1.498 0.414 30.1    0.707     3.17
+ AU / WUR     2.602 0.547 47.2    1.487     4.55
+ INRAE / IRTA 2.254 0.571 24.5    1.122     4.53
+ INRAE / WUR  3.917 0.751 39.4    2.342     6.55
+ IRTA / WUR   1.737 0.423 30.5    0.896     3.37
+
+Results are averaged over the levels of: context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Conf-level adjustment: tukey method for comparing a family of 4 estimates 
+Intervals are back-transformed from the log scale </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>context, </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>context, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 context = negative:
@@ -3830,6 +3895,21 @@ Results are averaged over the levels of: institute
 Degrees-of-freedom method: satterthwaite 
 Tests are performed on the log scale </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>context = negative:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 0.769 0.0531 366    0.672    0.881
+
+context = positive:
+ contrast   ratio     SE  df lower.CL upper.CL
+ pre / post 1.055 0.0737 371    0.919    1.210
+
+Results are averaged over the levels of: institute 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Intervals are back-transformed from the log scale </code></pre>
+</div>
 </div>
 </section>
 </section>
@@ -3838,37 +3918,37 @@ Tests are performed on the log scale </code></pre>
 <p>Model with interactions of fixed effects and random intercepts but constant slope.</p>
 <p>Full model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(<span class="fu">log</span>(cort_ngmL) <span class="sc">~</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                                   sample <span class="sc">*</span> context <span class="sc">+</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                                   sample <span class="sc">*</span> institute <span class="sc">+</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                                   space_allowance.log.z <span class="sc">+</span> </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                                   time_collect.z <span class="sc">+</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>date) <span class="sc">+</span> </span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>pig_group_unique) <span class="sc">+</span> </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>pig_id_unique),</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data =</span> dat <span class="sc">|&gt;</span> </span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                                   dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">droplevels</span>(),</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">REML    =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(<span class="fu">log</span>(cort_ngmL) <span class="sc">~</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                                   sample <span class="sc">*</span> context <span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                                   sample <span class="sc">*</span> institute <span class="sc">+</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                                   space_allowance.log.z <span class="sc">+</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                                   time_collect.z <span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>date) <span class="sc">+</span> </span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>pig_group_unique) <span class="sc">+</span> </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dv">1</span><span class="sc">|</span>pig_id_unique),</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">data =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>                                   dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">droplevels</span>(),</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">REML    =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Reduced model, without interactions and without <code>sample</code>, <code>context</code> and <code>institute</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.red <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(<span class="fu">log</span>(cort_ngmL) <span class="sc">~</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                                       space_allowance.log.z <span class="sc">+</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                                       time_collect.z <span class="sc">+</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>date) <span class="sc">+</span> </span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>pig_group_unique) <span class="sc">+</span> </span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>pig_id_unique),</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">data =</span> dat <span class="sc">|&gt;</span> </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                                       dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">droplevels</span>(),</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">REML    =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.red <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(<span class="fu">log</span>(cort_ngmL) <span class="sc">~</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                                       space_allowance.log.z <span class="sc">+</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                                       time_collect.z <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>date) <span class="sc">+</span> </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>pig_group_unique) <span class="sc">+</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                                       (<span class="dv">1</span><span class="sc">|</span>pig_id_unique),</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">data =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                                       dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">droplevels</span>(),</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">REML    =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Comparison of reduced and full model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod.cort.noWUR.red, mod.cort.noWUR, <span class="at">test =</span> <span class="st">&quot;Chisq&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod.cort.noWUR.red, mod.cort.noWUR, <span class="at">test =</span> <span class="st">&quot;Chisq&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: droplevels(dplyr::filter(dat, institute != &quot;WUR&quot;))
 Models:
@@ -3885,7 +3965,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <h2 class="anchored" data-anchor-id="final-model-1">Final model</h2>
 <p>Get effect estimates and standard errors of the model fitted with ML (<code>REML = FALSE</code>):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod.cort.noWUR)<span class="sc">$</span>coefficients, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod.cort.noWUR)<span class="sc">$</span>coefficients, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                           Estimate Std. Error     df t value Pr(&gt;|t|)
 (Intercept)                    1.81       0.21  41.94    8.60     0.00
@@ -3902,8 +3982,8 @@ samplepost:instituteIRTA       0.22       0.18 167.02    1.24     0.22</code></p
 </div>
 <p>Get <em>p</em> values of fixed effects and interactions of the model fitted with REML (<code>REML = TRUE</code>). Using <code>drop1()</code>, for factors that are part of interactions, the main effect cannot be tested. In this case <code>car::Anova</code> can be used:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">drop1</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">test =</span> <span class="st">&quot;Chisq&quot;</span>), <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">drop1</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">test =</span> <span class="st">&quot;Chisq&quot;</span>), <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Single term deletions using Satterthwaite&#39;s method:
 
@@ -3917,9 +3997,9 @@ sample:institute       1.668   0.834     2 203.393   4.960  0.008 **
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">test.statistic =</span> <span class="st">&quot;Chisq&quot;</span>,</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="dv">3</span>) <span class="co"># as with interaction, otherwise set type = 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">test.statistic =</span> <span class="st">&quot;Chisq&quot;</span>,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="dv">3</span>) <span class="co"># as with interaction, otherwise set type = 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
 
@@ -3936,9 +4016,9 @@ sample:institute       9.9198  2   0.007014 **
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">test.statistic =</span> <span class="st">&quot;F&quot;</span>,</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="dv">3</span>) <span class="co"># as with interaction, otherwise set type = 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod.cort.noWUR <span class="sc">|&gt;</span> <span class="fu">update</span>(<span class="at">REML =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">test.statistic =</span> <span class="st">&quot;F&quot;</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="dv">3</span>) <span class="co"># as with interaction, otherwise set type = 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
 
@@ -3960,27 +4040,28 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <section id="model-diagnostics-1" class="level2">
 <h2 class="anchored" data-anchor-id="model-diagnostics-1">Model diagnostics</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_model</span>(mod.cort.noWUR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_model</span>(mod.cort.noWUR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="emmeans-1" class="level2">
 <h2 class="anchored" data-anchor-id="emmeans-1">Emmeans</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> institute, </span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                               pairwise <span class="sc">~</span> institute, </span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data    =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>                                 dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">droplevels</span>(), </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
  institute response   SE   df lower.CL upper.CL
- AU            5.73 1.05 27.5     3.94     8.34
- INRAE         7.53 1.01 17.6     5.68     9.99
- IRTA          4.64 1.43 17.5     2.43     8.87
- WUR           5.73 1.05 27.5     3.94     8.34
+ AU            5.79 1.14 24.0     3.85     8.70
+ INRAE         7.61 1.06 14.9     5.66    10.24
+ IRTA          4.69 1.30 17.9     2.62     8.41
 
 Results are averaged over the levels of: sample, context 
 Degrees-of-freedom method: satterthwaite 
@@ -3989,49 +4070,56 @@ Intervals are back-transformed from the log scale
 
 $contrasts
  contrast     ratio    SE   df null t.ratio p.value
- AU / INRAE   0.761 0.165 23.0    1  -1.261  0.5515
- AU / IRTA    1.234 0.511 20.5    1   0.508  0.9391
- AU / WUR     1.000 0.000  NaN    1     NaN     NaN
- INRAE / IRTA 1.622 0.554 16.1    1   1.415  0.4666
- INRAE / WUR  1.314 0.285 23.0    1   1.261  0.5515
- IRTA / WUR   0.810 0.335 20.5    1  -0.508  0.9391
+ AU / INRAE   0.761 0.165 23.0    1  -1.261  0.4307
+ AU / IRTA    1.234 0.511 20.5    1   0.508  0.8682
+ INRAE / IRTA 1.622 0.554 16.1    1   1.415  0.3567
 
 Results are averaged over the levels of: sample, context 
 Degrees-of-freedom method: satterthwaite 
-P value adjustment: tukey method for comparing a family of 3.70156211871642 estimates 
+P value adjustment: tukey method for comparing a family of 3 estimates 
 Tests are performed on the log scale </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm1<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE   0.761 0.165 23.0    0.442     1.31
+ AU / IRTA    1.234 0.511 20.5    0.434     3.51
+ INRAE / IRTA 1.622 0.554 16.1    0.672     3.92
+
+Results are averaged over the levels of: sample, context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Conf-level adjustment: tukey method for comparing a family of 3 estimates 
+Intervals are back-transformed from the log scale </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>institute, </span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                               pairwise <span class="sc">~</span> sample<span class="sc">|</span>institute, </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data    =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                                 dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">droplevels</span>(), </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 institute = AU:
- sample response    SE   df lower.CL upper.CL
- pre        6.42 1.300 35.6     4.26     9.69
- post       5.11 0.918 28.1     3.54     7.39
+ sample response   SE   df lower.CL upper.CL
+ pre        6.49 1.38 29.9     4.20    10.02
+ post       5.17 1.02 25.0     3.44     7.76
 
 institute = INRAE:
- sample response    SE   df lower.CL upper.CL
- pre        7.01 1.060 24.6     5.13     9.57
- post       8.10 1.110 19.1     6.09    10.78
+ sample response   SE   df lower.CL upper.CL
+ pre        7.08 1.06 19.4     5.17     9.69
+ post       8.18 1.20 17.6     6.01    11.14
 
 institute = IRTA:
- sample response    SE   df lower.CL upper.CL
- pre        4.65 1.460 18.0     2.41     9.00
- post       4.64 1.560 22.7     2.31     9.29
-
-institute = WUR:
- sample response    SE   df lower.CL upper.CL
- pre        6.42 1.300 35.6     4.26     9.69
- post       5.11 0.918 28.1     3.54     7.39
+ sample response   SE   df lower.CL upper.CL
+ pre        4.70 1.30 17.4     2.62     8.43
+ post       4.68 1.48 25.3     2.44     8.97
 
 Results are averaged over the levels of: context 
 Degrees-of-freedom method: satterthwaite 
@@ -4051,39 +4139,54 @@ institute = IRTA:
  contrast   ratio     SE    df null t.ratio p.value
  pre / post 1.004 0.2120  83.8    1   0.020  0.9839
 
-institute = WUR:
- contrast   ratio     SE    df null t.ratio p.value
- pre / post 1.256 0.1430 232.2    1   2.000  0.0467
-
 Results are averaged over the levels of: context 
 Degrees-of-freedom method: satterthwaite 
 Tests are performed on the log scale </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm2<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>institute = AU:
+ contrast   ratio     SE    df lower.CL upper.CL
+ pre / post 1.256 0.1430 232.2    1.003     1.57
+
+institute = INRAE:
+ contrast   ratio     SE    df lower.CL upper.CL
+ pre / post 0.865 0.0896 158.6    0.705     1.06
+
+institute = IRTA:
+ contrast   ratio     SE    df lower.CL upper.CL
+ pre / post 1.004 0.2120  83.8    0.660     1.53
+
+Results are averaged over the levels of: context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Intervals are back-transformed from the log scale </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> institute<span class="sc">|</span>sample, </span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>                               pairwise <span class="sc">~</span> institute<span class="sc">|</span>sample, </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data    =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>                                 dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">droplevels</span>(), </span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 sample = pre:
- institute response    SE   df lower.CL upper.CL
- AU            6.42 1.300 35.6     4.26     9.69
- INRAE         7.01 1.060 24.6     5.13     9.57
- IRTA          4.65 1.460 18.0     2.41     9.00
- WUR           6.42 1.300 35.6     4.26     9.69
+ institute response   SE   df lower.CL upper.CL
+ AU            6.49 1.38 29.9     4.20    10.02
+ INRAE         7.08 1.06 19.4     5.17     9.69
+ IRTA          4.70 1.30 17.4     2.62     8.43
 
 sample = post:
- institute response    SE   df lower.CL upper.CL
- AU            5.11 0.918 28.1     3.54     7.39
- INRAE         8.10 1.110 19.1     6.09    10.78
- IRTA          4.64 1.560 22.7     2.31     9.29
- WUR           5.11 0.918 28.1     3.54     7.39
+ institute response   SE   df lower.CL upper.CL
+ AU            5.17 1.02 25.0     3.44     7.76
+ INRAE         8.18 1.20 17.6     6.01    11.14
+ IRTA          4.68 1.48 25.3     2.44     8.97
 
 Results are averaged over the levels of: context 
 Degrees-of-freedom method: satterthwaite 
@@ -4093,48 +4196,64 @@ Intervals are back-transformed from the log scale
 $contrasts
 sample = pre:
  contrast     ratio    SE   df null t.ratio p.value
- AU / INRAE   0.917 0.205 26.3    1  -0.389  0.9693
- AU / IRTA    1.380 0.562 19.8    1   0.791  0.8241
- AU / WUR     1.000 0.000  NaN    1     NaN     NaN
- INRAE / IRTA 1.506 0.512 15.8    1   1.204  0.5898
- INRAE / WUR  1.091 0.244 26.3    1   0.389  0.9693
- IRTA / WUR   0.725 0.295 19.8    1  -0.791  0.8241
+ AU / INRAE   0.917 0.205 26.3    1  -0.389  0.9203
+ AU / IRTA    1.380 0.562 19.8    1   0.791  0.7127
+ INRAE / IRTA 1.506 0.512 15.8    1   1.204  0.4684
 
 sample = post:
  contrast     ratio    SE   df null t.ratio p.value
- AU / INRAE   0.631 0.142 26.8    1  -2.038  0.1764
- AU / IRTA    1.103 0.484 24.3    1   0.224  0.9928
- AU / WUR     1.000 0.000  NaN    1     NaN     NaN
- INRAE / IRTA 1.747 0.632 19.4    1   1.543  0.3940
- INRAE / WUR  1.584 0.357 26.8    1   2.038  0.1764
- IRTA / WUR   0.906 0.398 24.3    1  -0.224  0.9928
+ AU / INRAE   0.631 0.142 26.8    1  -2.038  0.1226
+ AU / IRTA    1.103 0.484 24.3    1   0.224  0.9728
+ INRAE / IRTA 1.747 0.632 19.4    1   1.543  0.2938
 
 Results are averaged over the levels of: context 
 Degrees-of-freedom method: satterthwaite 
-P value adjustment: tukey method for varying family sizes 
+P value adjustment: tukey method for comparing a family of 3 estimates 
 Tests are performed on the log scale </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm3<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>sample = pre:
+ contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE   0.917 0.205 26.3    0.526     1.60
+ AU / IRTA    1.380 0.562 19.8    0.492     3.87
+ INRAE / IRTA 1.506 0.512 15.8    0.625     3.62
+
+sample = post:
+ contrast     ratio    SE   df lower.CL upper.CL
+ AU / INRAE   0.631 0.142 26.8    0.361     1.11
+ AU / IRTA    1.103 0.484 24.3    0.369     3.30
+ INRAE / IRTA 1.747 0.632 19.4    0.698     4.37
+
+Results are averaged over the levels of: context 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Conf-level adjustment: tukey method for comparing a family of 3 estimates 
+Intervals are back-transformed from the log scale </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                         pairwise <span class="sc">~</span> sample<span class="sc">|</span>context, </span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data    =</span> dat, </span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>mod.cort.emm4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm4 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod.cort.noWUR,</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>                               pairwise <span class="sc">~</span> sample<span class="sc">|</span>context, </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">data    =</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>                                 dplyr<span class="sc">::</span><span class="fu">filter</span>(institute <span class="sc">!=</span> <span class="st">&quot;WUR&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">droplevels</span>(), </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">adjust  =</span> <span class="st">&quot;tukey&quot;</span>,</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">lmer.df =</span> <span class="st">&quot;satterthwaite&quot;</span>,</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">type    =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
 context = negative:
  sample response    SE   df lower.CL upper.CL
- pre        5.76 0.769 47.1     4.40     7.54
- post       6.08 0.665 31.1     4.86     7.60
+ pre        5.71 0.651 38.4     4.53     7.19
+ post       6.33 0.742 33.4     4.99     8.03
 
 context = positive:
  sample response    SE   df lower.CL upper.CL
- pre        6.37 0.887 42.4     4.81     8.44
- post       5.15 0.582 35.8     4.10     6.48
+ pre        6.31 0.743 34.4     4.97     8.01
+ post       5.36 0.636 40.7     4.22     6.82
 
 Results are averaged over the levels of: institute 
 Degrees-of-freedom method: satterthwaite 
@@ -4144,15 +4263,30 @@ Intervals are back-transformed from the log scale
 $contrasts
 context = negative:
  contrast   ratio    SE  df null t.ratio p.value
- pre / post 0.948 0.114 128    1  -0.446  0.6561
+ pre / post 0.902 0.115 108    1  -0.811  0.4193
 
 context = positive:
  contrast   ratio    SE  df null t.ratio p.value
- pre / post 1.236 0.154 120    1   1.697  0.0924
+ pre / post 1.176 0.156 102    1   1.226  0.2230
 
 Results are averaged over the levels of: institute 
 Degrees-of-freedom method: satterthwaite 
 Tests are performed on the log scale </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>mod.cort.noWUR.emm4<span class="sc">$</span>contrasts <span class="sc">%&gt;%</span> <span class="fu">confint</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>context = negative:
+ contrast   ratio    SE  df lower.CL upper.CL
+ pre / post 0.902 0.115 108    0.700     1.16
+
+context = positive:
+ contrast   ratio    SE  df lower.CL upper.CL
+ pre / post 1.176 0.156 102    0.905     1.53
+
+Results are averaged over the levels of: institute 
+Degrees-of-freedom method: satterthwaite 
+Confidence level used: 0.95 
+Intervals are back-transformed from the log scale </code></pre>
 </div>
 </div>
 </section>
@@ -4162,32 +4296,32 @@ Tests are performed on the log scale </code></pre>
 <section id="figure-5-log-cortisol-all-institutes" class="level2">
 <h2 class="anchored" data-anchor-id="figure-5-log-cortisol-all-institutes">Figure 5: Log-Cortisol all institutes</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span>  </span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jit =</span> <span class="fu">jitter</span>(<span class="fu">as.numeric</span>(sample), <span class="fl">0.3</span>)) <span class="sc">|&gt;</span>  </span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(cort_ngmL))) <span class="sc">+</span> </span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sample),</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="cn">NA</span>, </span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">width=</span><span class="fl">0.5</span>,</span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> jit, <span class="at">group =</span> pig_id_unique), </span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">col =</span> <span class="st">&quot;grey80&quot;</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> jit, </span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col =</span> institute,</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shape =</span> institute), </span>
-<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> </span>
-<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;#481568FF&quot;</span>, <span class="st">&quot;#32648EFF&quot;</span>, <span class="st">&quot;#94D840FF&quot;</span>, <span class="st">&quot;#FDE725FF&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="dv">17</span>, <span class="dv">15</span>, <span class="dv">16</span>, <span class="dv">18</span>)) <span class="sc">+</span></span>
-<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> context) <span class="sc">+</span></span>
-<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x   =</span> <span class="st">&quot;Sample type&quot;</span>,</span>
-<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">y   =</span> <span class="st">&quot;Log(cortisol) (ng/ml)&quot;</span>,</span>
-<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Matching title ensures a single legend</span></span>
-<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">&quot;Institutes&quot;</span>,</span>
-<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">shape =</span> <span class="st">&quot;Institutes&quot;</span>) <span class="sc">+</span></span>
-<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>  my_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span>  </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jit =</span> <span class="fu">jitter</span>(<span class="fu">as.numeric</span>(sample), <span class="fl">0.3</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(cort_ngmL))) <span class="sc">+</span> </span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sample),</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="cn">NA</span>, </span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">width=</span><span class="fl">0.5</span>,</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> jit, <span class="at">group =</span> pig_id_unique), </span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">col =</span> <span class="st">&quot;grey80&quot;</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> jit, </span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col =</span> institute,</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shape =</span> institute), </span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> </span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;#481568FF&quot;</span>, <span class="st">&quot;#32648EFF&quot;</span>, <span class="st">&quot;#94D840FF&quot;</span>, <span class="st">&quot;#FDE725FF&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="dv">17</span>, <span class="dv">15</span>, <span class="dv">16</span>, <span class="dv">18</span>)) <span class="sc">+</span></span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> context) <span class="sc">+</span></span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x   =</span> <span class="st">&quot;Sample type&quot;</span>,</span>
+<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">y   =</span> <span class="st">&quot;Log(cortisol) (ng/ml)&quot;</span>,</span>
+<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Matching title ensures a single legend</span></span>
+<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">&quot;Institutes&quot;</span>,</span>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">shape =</span> <span class="st">&quot;Institutes&quot;</span>) <span class="sc">+</span></span>
+<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a>  my_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -4197,13 +4331,13 @@ Tests are performed on the log scale </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">&quot;./plots/cort-log-context-type-institute.png&quot;</span>,</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">180</span>, <span class="at">units =</span> <span class="st">&quot;mm&quot;</span>,</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">pointsize =</span> <span class="dv">10</span>, <span class="at">res =</span> <span class="dv">600</span>)</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>plot</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">&quot;./plots/cort-log-context-type-institute.png&quot;</span>,</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">180</span>, <span class="at">units =</span> <span class="st">&quot;mm&quot;</span>,</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">pointsize =</span> <span class="dv">10</span>, <span class="at">res =</span> <span class="dv">600</span>)</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>plot</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -4212,7 +4346,7 @@ Tests are performed on the log scale </code></pre>
 <p>“All analyses were performed using R Statistical Software (version 4.4.2; R Core Team 2024)”.</p>
 <p>Reference: R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>To cite R in publications use:
 
@@ -4235,13 +4369,13 @@ We have invested a lot of time and effort in creating R, please cite it
 when using it for data analysis. See also &#39;citation(&quot;pkgname&quot;)&#39; for
 citing R packages.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>version<span class="sc">$</span>version.string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>version<span class="sc">$</span>version.string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;R version 4.4.2 (2024-10-31 ucrt)&quot;</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;kableExtra&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;kableExtra&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Um Paket &#39;kableExtra&#39; in Publikationen zu zitieren, nutzen Sie bitte:
 
@@ -4259,7 +4393,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     url = {https://CRAN.R-project.org/package=kableExtra},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Um Paket &#39;tidyverse&#39; in Publikationen zu zitieren, nutzen Sie bitte:
 
@@ -4283,7 +4417,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     doi = {10.21105/joss.01686},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;rstatix&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;rstatix&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Um Paket &#39;rstatix&#39; in Publikationen zu zitieren, nutzen Sie bitte:
 
@@ -4301,7 +4435,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     url = {https://CRAN.R-project.org/package=rstatix},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;lmerTest&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;lmerTest&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>To cite lmerTest in publications use:
 
@@ -4323,7 +4457,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     doi = {10.18637/jss.v082.i13},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;car&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;car&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>To cite the car package in publications use:
 
@@ -4343,7 +4477,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     url = {https://www.john-fox.ca/Companion/},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;performance&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;performance&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Um Paket &#39;performance&#39; in Publikationen zu zitieren, nutzen Sie bitte:
 
@@ -4364,7 +4498,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     doi = {10.21105/joss.03139},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;emmeans&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;emmeans&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Um Paket &#39;emmeans&#39; in Publikationen zu zitieren, nutzen Sie bitte:
 
@@ -4387,7 +4521,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
 <section id="session-info" class="level1">
 <h1>Session Info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.2 (2024-10-31 ucrt)
 Platform: x86_64-w64-mingw32/x64

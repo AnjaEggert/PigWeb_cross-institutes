@@ -12,8 +12,6 @@ execute:
   warning: false
   message: false
   echo: true
-# project:
-#   input-dir: "./PigWeb-behavior"
 ---
 
 # Libraries
@@ -25,6 +23,7 @@ library(rstatix)
 library(glmmTMB)
 library(car)
 library(DHARMa)
+library(emmeans)
 library(patchwork)
 ```
 
@@ -183,6 +182,21 @@ Zero inflation:
 DHARMa::testZeroInflation(mod.ears.forw)
 ```
 
+### Emmeans
+
+```{r}
+mod.ears.forw.emm <- emmeans(mod.ears.forw,
+                             pairwise ~ institute, 
+                             data    = dat, 
+                             adjust  = "tukey",
+                             type    = "response")
+
+mod.ears.forw.emm
+
+mod.ears.forw.emm$contrasts %>% confint()
+```
+
+
 # Both ears backward
 
 ## Binomial model: no interactions
@@ -262,6 +276,20 @@ Zero inflation:
 
 ```{r}
 DHARMa::testZeroInflation(mod.ears.back)
+```
+
+### Emmeans
+
+```{r}
+mod.ears.back.emm <- emmeans(mod.ears.back,
+                             pairwise ~ institute, 
+                             data    = dat, 
+                             adjust  = "tukey",
+                             type    = "response")
+
+mod.ears.back.emm
+
+mod.ears.back.emm$contrasts %>% confint()
 ```
 
 # Figures

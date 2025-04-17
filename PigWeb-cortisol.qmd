@@ -12,8 +12,6 @@ execute:
   warning: false
   message: false
   echo: true
-# project:
-#   input-dir: "./PigWeb-hormones"
 ---
 
 # Libraries
@@ -179,6 +177,8 @@ mod.cort.emm1 <- emmeans(mod.cort,
                          type    = "response")
 
 mod.cort.emm1
+
+mod.cort.emm1$contrasts %>% confint()
 ```
 
 ```{r}
@@ -190,6 +190,8 @@ mod.cort.emm2 <- emmeans(mod.cort,
                          type    = "response")
 
 mod.cort.emm2
+
+mod.cort.emm2$contrasts %>% confint()
 ```
 
 ```{r}
@@ -201,6 +203,8 @@ mod.cort.emm3 <- emmeans(mod.cort,
                          type    = "response")
 
 mod.cort.emm3
+
+mod.cort.emm3$contrasts %>% confint()
 ```
 
 ```{r}
@@ -212,6 +216,8 @@ mod.cort.emm4 <- emmeans(mod.cort,
                          type    = "response")
 
 mod.cort.emm4
+
+mod.cort.emm4$contrasts %>% confint()
 ```
 
 # Cortisol model: only 3 institutes, without WUR
@@ -290,47 +296,63 @@ performance::check_model(mod.cort.noWUR)
 ## Emmeans
 
 ```{r}
-mod.cort.emm1 <- emmeans(mod.cort.noWUR,
-                         pairwise ~ institute, 
-                         data    = dat, 
-                         adjust  = "tukey",
-                         lmer.df = "satterthwaite",
-                         type    = "response")
+mod.cort.noWUR.emm1 <- emmeans(mod.cort.noWUR,
+                               pairwise ~ institute, 
+                               data    = dat |> 
+                                 dplyr::filter(institute != "WUR") |> 
+                                 droplevels(), 
+                               adjust  = "tukey",
+                               lmer.df = "satterthwaite",
+                               type    = "response")
 
-mod.cort.emm1
+mod.cort.noWUR.emm1
+
+mod.cort.noWUR.emm1$contrasts %>% confint()
 ```
 
 ```{r}
-mod.cort.emm2 <- emmeans(mod.cort.noWUR,
-                         pairwise ~ sample|institute, 
-                         data    = dat, 
-                         adjust  = "tukey",
-                         lmer.df = "satterthwaite",
-                         type    = "response")
+mod.cort.noWUR.emm2 <- emmeans(mod.cort.noWUR,
+                               pairwise ~ sample|institute, 
+                               data    = dat |> 
+                                 dplyr::filter(institute != "WUR") |> 
+                                 droplevels(), 
+                               adjust  = "tukey",
+                               lmer.df = "satterthwaite",
+                               type    = "response")
 
-mod.cort.emm2
+mod.cort.noWUR.emm2
+
+mod.cort.noWUR.emm2$contrasts %>% confint()
 ```
 
 ```{r}
-mod.cort.emm3 <- emmeans(mod.cort.noWUR,
-                         pairwise ~ institute|sample, 
-                         data    = dat, 
-                         adjust  = "tukey",
-                         lmer.df = "satterthwaite",
-                         type    = "response")
+mod.cort.noWUR.emm3 <- emmeans(mod.cort.noWUR,
+                               pairwise ~ institute|sample, 
+                               data    = dat |> 
+                                 dplyr::filter(institute != "WUR") |> 
+                                 droplevels(), 
+                               adjust  = "tukey",
+                               lmer.df = "satterthwaite",
+                               type    = "response")
 
-mod.cort.emm3
+mod.cort.noWUR.emm3
+
+mod.cort.noWUR.emm3$contrasts %>% confint()
 ```
 
 ```{r}
-mod.cort.emm4 <- emmeans(mod.cort.noWUR,
-                         pairwise ~ sample|context, 
-                         data    = dat, 
-                         adjust  = "tukey",
-                         lmer.df = "satterthwaite",
-                         type    = "response")
+mod.cort.noWUR.emm4 <- emmeans(mod.cort.noWUR,
+                               pairwise ~ sample|context, 
+                               data    = dat |> 
+                                 dplyr::filter(institute != "WUR") |> 
+                                 droplevels(), 
+                               adjust  = "tukey",
+                               lmer.df = "satterthwaite",
+                               type    = "response")
 
-mod.cort.emm4
+mod.cort.noWUR.emm4
+
+mod.cort.noWUR.emm4$contrasts %>% confint()
 ```
 
 # Figures

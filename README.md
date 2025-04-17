@@ -56,10 +56,16 @@ Figures:
 Supplementary Tables:
 
 - Supplementary Table S1:  `PigWeb-ears.qmd`
-- Supplementary Table S2:  `PigWeb-oxytocin.qmd`
-- Supplementary Table S3:  `PigWeb-play-escape-inactive.qmd`
-- Supplementary Table S4:  `PigWeb-cortisol.qmd`
-- Supplementary Table S5:  `PigWeb-pca.qmd`
+- Supplementary Table S2:  `PigWeb-ears.qmd`
+- Supplementary Table S3:  `PigWeb-ears.qmd`
+- Supplementary Table S4:  `PigWeb-oxytocin.qmd`
+- Supplementary Table S5:  `PigWeb-oxytocin.qmd`
+- Supplementary Table S6:  `PigWeb-play-escape-inactive.qmd`
+- Supplementary Table S7:  `PigWeb-play-escape-inactive.qmd`
+- Supplementary Table S8:  `PigWeb-cortisol.qmd`
+- Supplementary Table S9:  `PigWeb-cortisol.qmd`
+- Supplementary Table S10:  `PigWeb-cortisol.qmd`
+- Supplementary Table S11:  `PigWeb-pca.qmd`
 
 Supplementary Figure:
 
